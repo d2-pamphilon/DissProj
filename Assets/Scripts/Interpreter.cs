@@ -15,14 +15,18 @@ public class Interpreter : MonoBehaviour
     private int mode = 1;
     private static Stack<Vector3> thePosStack = new Stack<Vector3>();
     private static Stack<Quaternion> theRotStack = new Stack<Quaternion>();
-
+   // private ReWriter reWrite;
     void Start()
-    {/*do nothing*/ }
+    { //get ReWriting script
+        
+    }
 
     // Update is called once per frame
     void Update()
     {
-        //get ReWriting script
+       
+
+
         ReWriter reWrite = GetComponent<ReWriter>();
         //if generate bool is true
         if (reWrite.generate)
@@ -176,6 +180,7 @@ public class Interpreter : MonoBehaviour
                     break;
 
                 default:
+                    print("default");
                     break;
             }
 
@@ -196,7 +201,11 @@ public class Interpreter : MonoBehaviour
     }
 
     private void YTree()
-    { /*nothing*/ }
+    {
+        
+
+        /*nothing*/
+    }
 
     private void BOTree()
     {
@@ -220,13 +229,13 @@ public class Interpreter : MonoBehaviour
     private void PTree()
     {
         //angle right
-        turtle.transform.Rotate(new Vector3(0.0f, 0.0f, angle));
+        turtle.transform.Rotate(new Vector3(0.0f, 0.0f, -angle));
     }
 
     private void NTree()
     {
         //angle left
-        turtle.transform.Rotate(new Vector3(0.0f, 0.0f, -angle));
+        turtle.transform.Rotate(new Vector3(0.0f, 0.0f, angle));
     }
 
 }

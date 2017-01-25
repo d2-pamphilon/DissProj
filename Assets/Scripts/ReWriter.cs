@@ -27,7 +27,7 @@ public class ReWriter : MonoBehaviour
         //StringA = "F";
         iterations = 1;
         ruleX = "";
-        ruleF = "f+f-f-f+f";//1FF-[2-F+F+F]+[1+F-F-F]
+        ruleF = "";//1FF-[2-F+F+F]+[1+F-F-F]
         ruleY = "";
         ruleBO = "";
         ruleBC = "";
@@ -179,6 +179,7 @@ public class ReWriter : MonoBehaviour
                     }
                     break;
                 case '+':
+                
                     if (ruleP == "")
                     {
                         writeTo = writeTo.Insert(i, "+");
@@ -192,7 +193,9 @@ public class ReWriter : MonoBehaviour
                     break;
 
                 case '-':
-                    if (ruleX == "")
+                case '−':
+             
+                    if (ruleN == "")
                     {
                         writeTo = writeTo.Insert(i, "-");
                         i += 1;
