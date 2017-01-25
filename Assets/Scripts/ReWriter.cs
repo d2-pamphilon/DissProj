@@ -26,13 +26,13 @@ public class ReWriter : MonoBehaviour
         Axiom = "f";
         //StringA = "F";
         iterations = 1;
-        ruleX = "";
-        ruleF = "";//1FF-[2-F+F+F]+[1+F-F-F]
-        ruleY = "";
-        ruleBO = "";
-        ruleBC = "";
-        ruleP = "";
-        ruleN = "";
+        ruleX = "x";
+        ruleF = "f";//1FF-[2-F+F+F]+[1+F-F-F]
+        ruleY = "y";
+        ruleBO = "[";
+        ruleBC = "]";
+        ruleP = "+";
+        ruleN = "-";
     }
 
     // Update is called once per frame
@@ -113,98 +113,98 @@ public class ReWriter : MonoBehaviour
                 case 'x':
                 case 'X':
                     //if there is no rule, stays as itself
-                    if (ruleX == "")
-                    {
-                        writeTo = writeTo.Insert(i, "x");
-                        i += 1;
-                    }
-                    //if there is a rule use that
-                    else
-                    {
+                    //if (ruleX == "")
+                    //{
+                    //    writeTo = writeTo.Insert(i, "x");
+                    //    i += 1;
+                    //}
+                    ////if there is a rule use that
+                    //else
+                    //{
                         writeTo = writeTo.Insert(i, ruleX);
                         i += ruleX.Length;
-                    }
+                   // }
 
                     break;
 
                 case 'f':
                 case 'F':
-                    if (ruleF == "")
-                    {
-                        writeTo = writeTo.Insert(i, "f");
-                        i += 1;
-                    }
-                    else
-                    {
+                    //if (ruleF == "")
+                    //{
+                    //    writeTo = writeTo.Insert(i, "f");
+                    //    i += 1;
+                    //}
+                    //else
+                    //{
                         writeTo = writeTo.Insert(i, ruleF);
                         i += ruleF.Length;
-                    }
+                   // }
                     break;
                 case 'y':
                 case 'Y':
-                    if (ruleY == "")
-                    {
-                        writeTo = writeTo.Insert(i, "y");
-                        i += 1;
-                    }
-                    else
-                    {
+                    //if (ruleY == "")
+                    //{
+                    //    writeTo = writeTo.Insert(i, "y");
+                    //    i += 1;
+                    //}
+                    //else
+                    //{
                         writeTo = writeTo.Insert(i, ruleY);
                         i += ruleY.Length;
-                    }
+                   // }
                     break;
                 case '[':
-                    if (ruleBO == "")
-                    {
-                        writeTo = writeTo.Insert(i, "[");
-                        i += 1;
-                    }
-                    else
-                    {
+                    //if (ruleBO == "")
+                    //{
+                    //    writeTo = writeTo.Insert(i, "[");
+                    //    i += 1;
+                    //}
+                    //else
+                    //{
                         writeTo = writeTo.Insert(i, ruleBO);
                         i += ruleBO.Length;
-                    }
+                  //  }
                     break;
 
                 case ']':
-                    if (ruleBC == "")
-                    {
-                        writeTo = writeTo.Insert(i, "]");
-                        i += 1;
-                    }
-                    else
-                    {
+                    //if (ruleBC == "")
+                    //{
+                    //    writeTo = writeTo.Insert(i, "]");
+                    //    i += 1;
+                    //}
+                    //else
+                    //{
                         writeTo = writeTo.Insert(i, ruleBC);
                         i += ruleBC.Length;
-                    }
+                   // }
                     break;
                 case '+':
                 
-                    if (ruleP == "")
-                    {
-                        writeTo = writeTo.Insert(i, "+");
-                        i += 1;
-                    }
-                    else
-                    {
+                    //if (ruleP == "")
+                    //{
+                    //    writeTo = writeTo.Insert(i, "+");
+                    //    i += 1;
+                    //}
+                    //else
+                    //{
                         writeTo = writeTo.Insert(i, ruleP);
                         i += ruleP.Length;
-                    }
+                    //}
                     break;
 
                 case '-':
                 case '−':
              
-                    if (ruleN == "")
-                    {
-                        writeTo = writeTo.Insert(i, "-");
-                        i += 1;
-                    }
-                    else
-                    {
+                    //if (ruleN == "")
+                    //{
+                    //    writeTo = writeTo.Insert(i, "-");
+                    //    i += 1;
+                    //}
+                    //else
+                    //{
                         writeTo = writeTo.Insert(i, ruleN);
                         i += ruleN.Length;
-                    }
+                   // }
                     break;
 
                 default:
