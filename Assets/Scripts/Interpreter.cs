@@ -12,22 +12,22 @@ public class Interpreter : MonoBehaviour
     public Material red;
     public float angle;
 
-    private int mode = 1;
+    private int mode = 1;//cant pass enum into switch witout converting to int, so just have int instead
     private static Stack<Vector3> thePosStack = new Stack<Vector3>();
     private static Stack<Quaternion> theRotStack = new Stack<Quaternion>();
-   // private ReWriter reWrite;
+    private ReWriter reWrite;
+
+    
+
+
     void Start()
     { //get ReWriting script
-        
+        reWrite = GetComponent<ReWriter>();
     }
 
     // Update is called once per frame
     void Update()
     {
-       
-
-
-        ReWriter reWrite = GetComponent<ReWriter>();
         //if generate bool is true
         if (reWrite.generate)
         {
@@ -80,7 +80,7 @@ public class Interpreter : MonoBehaviour
                     switch (mode)
                     {
                         case 1:
-                            XTree();
+                            X2D();
                             break;
                         case 2:
                             //extra mode
@@ -96,7 +96,7 @@ public class Interpreter : MonoBehaviour
                     switch (mode)
                     {
                         case 1:
-                            FTree();
+                            F2D();
                             break;
                         case 2:
                             //extra mode
@@ -112,7 +112,7 @@ public class Interpreter : MonoBehaviour
                     switch (mode)
                     {
                         case 1:
-                            YTree();
+                            Y2D();
                             break;
                         case 2:
                             //extra mode
@@ -126,7 +126,7 @@ public class Interpreter : MonoBehaviour
                     switch (mode)
                     {
                         case 1:
-                            BOTree();
+                            BO2D();
                             break;
                         case 2:
                             //extra mode
@@ -140,7 +140,7 @@ public class Interpreter : MonoBehaviour
                     switch (mode)
                     {
                         case 1:
-                            BCTree();
+                            BC2D();
                             break;
                         case 2:
                             //extra mode
@@ -153,7 +153,7 @@ public class Interpreter : MonoBehaviour
                     switch (mode)
                     {
                         case 1:
-                            PTree();
+                            P2D();
                             break;
                         case 2:
                             //extra mode
@@ -169,7 +169,7 @@ public class Interpreter : MonoBehaviour
                     switch (mode)
                     {
                         case 1:
-                            NTree();
+                            N2D();
                             break;
                         case 2:
                             //extra mode
@@ -183,33 +183,56 @@ public class Interpreter : MonoBehaviour
                     print("default");
                     break;
             }
-
         }
     }
 
-
-    private void XTree()
+    //2d functions
+    private void X2D()
     {/*do nothing*/}
 
 
-    private void FTree()
+    private void Y2D()
+    { /*nothing*/    }
+
+
+    private void P2D()
     {
+        //angle right
+        turtle.transform.Rotate(new Vector3(0.0f, 0.0f, -angle));
+    }
+
+    private void N2D()
+    {
+        //angle left
+        turtle.transform.Rotate(new Vector3(0.0f, 0.0f, angle));
+    }
+
+    //3d tree specific functions
+
+    private void XTree()
+    { }
+
+    private void YTree()
+    { }
+
+    //varience in angle
+    private void PTree()
+    { }
+
+    private void NTree()
+    { }
+
+    //comon functions
+    private void Forward()
+    { 
         //create trunk at turtles location and rotation
         Instantiate(trunk, turtle.transform.position, turtle.transform.rotation);
         //move turtle forward
         turtle.transform.Translate(Vector3.up * 2);
     }
 
-    private void YTree()
-    {
-        
-
-        /*nothing*/
-    }
-
-    private void BOTree()
-    {
-        //place turtles position into the position stack
+    private void OnStack()
+    { //place turtles position into the position stack
         Vector3 tempPos = turtle.transform.position;
         thePosStack.Push(tempPos);
         //place turtles rotation into the rotation stack
@@ -217,25 +240,12 @@ public class Interpreter : MonoBehaviour
         theRotStack.Push(tempRot);
     }
 
-
-    private void BCTree()
-    {
+    private void OffStack()
+    { 
         // move turtle to position on top of stack
         turtle.transform.position = thePosStack.Pop();
         //rotate turtle to rotation on stack
         turtle.transform.rotation = theRotStack.Pop();
-    }
-
-    private void PTree()
-    {
-        //angle right
-        turtle.transform.Rotate(new Vector3(0.0f, 0.0f, -angle));
-    }
-
-    private void NTree()
-    {
-        //angle left
-        turtle.transform.Rotate(new Vector3(0.0f, 0.0f, angle));
     }
 
 }
