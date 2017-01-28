@@ -17,8 +17,6 @@ public class Interpreter : MonoBehaviour
     private static Stack<Quaternion> theRotStack = new Stack<Quaternion>();
     private ReWriter reWrite;
 
-    
-
 
     void Start()
     { //get ReWriting script
@@ -96,7 +94,7 @@ public class Interpreter : MonoBehaviour
                     switch (mode)
                     {
                         case 1:
-                            F2D();
+                            Forward();
                             break;
                         case 2:
                             //extra mode
@@ -126,7 +124,7 @@ public class Interpreter : MonoBehaviour
                     switch (mode)
                     {
                         case 1:
-                            BO2D();
+                            OnStack();
                             break;
                         case 2:
                             //extra mode
@@ -140,7 +138,7 @@ public class Interpreter : MonoBehaviour
                     switch (mode)
                     {
                         case 1:
-                            BC2D();
+                            OffStack();
                             break;
                         case 2:
                             //extra mode
@@ -224,7 +222,7 @@ public class Interpreter : MonoBehaviour
 
     //comon functions
     private void Forward()
-    { 
+    {
         //create trunk at turtles location and rotation
         Instantiate(trunk, turtle.transform.position, turtle.transform.rotation);
         //move turtle forward
@@ -241,11 +239,16 @@ public class Interpreter : MonoBehaviour
     }
 
     private void OffStack()
-    { 
+    {
         // move turtle to position on top of stack
         turtle.transform.position = thePosStack.Pop();
         //rotate turtle to rotation on stack
         turtle.transform.rotation = theRotStack.Pop();
     }
 
+    
 }
+
+
+
+

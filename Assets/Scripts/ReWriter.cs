@@ -1,5 +1,8 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.IO;
+using UnityEngine.UI;
+
 
 public class ReWriter : MonoBehaviour
 {
@@ -9,6 +12,10 @@ public class ReWriter : MonoBehaviour
     public bool flip = true;  //true = A    false = B //move to private - get, set
     public bool generate = false;//move to private - get set
     public int iterations;
+    public string fileName;
+    public bool stochY;
+    public bool stochX;
+    public bool stochF;
 
     //  \/move to private \/ - use ui for inputs
     public string ruleX;
@@ -19,6 +26,8 @@ public class ReWriter : MonoBehaviour
     public string ruleN;
     public string ruleP;
 
+    InputField input;
+    InputField.SubmitEvent se;
 
     void Start()
     {
@@ -33,6 +42,14 @@ public class ReWriter : MonoBehaviour
         ruleBC = "]";
         ruleP = "+";
         ruleN = "-";
+        stochY = true;
+        stochX = true;
+        stochF = true;
+        input = GameObject.FindGameObjectWithTag("Input").GetComponent<InputField>();
+        se = new InputField.SubmitEvent();
+        se.AddListener(SubmitInput);
+        input.onEndEdit = se;
+
     }
 
     // Update is called once per frame
@@ -41,7 +58,7 @@ public class ReWriter : MonoBehaviour
         //if space is pressed, run for x amount of iterations
         if (Input.GetKeyDown("space"))
         {
-          //  if strings are empty, use axiom
+            //  if strings are empty, use axiom
             if (StringA == "" && StringB == "")
             {
                 StringA = Axiom;
@@ -52,7 +69,7 @@ public class ReWriter : MonoBehaviour
                 {
                     rewrite();
                 }
-           }
+            }
 
         }
 
@@ -65,8 +82,8 @@ public class ReWriter : MonoBehaviour
     private void reset()
     {
         //clear strings
-         deleteA();
-       /// StringA = "F";
+        deleteA();
+        /// StringA = "F";
         deleteB();
         //set flip to default 
         flip = true;
@@ -109,102 +126,103 @@ public class ReWriter : MonoBehaviour
                     writeTo = writeTo.Insert(i, "2");
                     i += 1;
                     break;
-                    //will take caps or lowercase
+                //will take caps or lowercase
                 case 'x':
                 case 'X':
-                    //if there is no rule, stays as itself
-                    //if (ruleX == "")
-                    //{
-                    //    writeTo = writeTo.Insert(i, "x");
-                    //    i += 1;
-                    //}
-                    ////if there is a rule use that
-                    //else
-                    //{
+                    if (stochX)
+                    {
+                        if (rndBool(50))
+                        {
+                            writeTo = writeTo.Insert(i, ruleX);
+                            i += ruleX.Length;
+                        }
+                        else
+                        {
+                            writeTo = writeTo.Insert(i, "x");
+                            i++;
+                        }
+                    }
+                    else
+                    {
                         writeTo = writeTo.Insert(i, ruleX);
                         i += ruleX.Length;
-                   // }
+                    }
+
+
 
                     break;
 
                 case 'f':
                 case 'F':
-                    //if (ruleF == "")
-                    //{
-                    //    writeTo = writeTo.Insert(i, "f");
-                    //    i += 1;
-                    //}
-                    //else
-                    //{
+                    if (stochF)
+                    {
+                        if (rndBool(50))
+                        {
+                            writeTo = writeTo.Insert(i, ruleF);
+                            i += ruleF.Length;
+                        }
+                        else
+                        {
+                            writeTo = writeTo.Insert(i, "f");
+                            i++;
+                        }
+                    }
+                    else
+                    {
                         writeTo = writeTo.Insert(i, ruleF);
                         i += ruleF.Length;
-                   // }
+                    }
+
                     break;
                 case 'y':
                 case 'Y':
-                    //if (ruleY == "")
-                    //{
-                    //    writeTo = writeTo.Insert(i, "y");
-                    //    i += 1;
-                    //}
-                    //else
-                    //{
+                    if (stochY)
+                    {
+                        if (rndBool(50))
+                        {
+                            writeTo = writeTo.Insert(i, ruleY);
+                            i += ruleY.Length;
+                        }
+                        else
+                        {
+                            writeTo = writeTo.Insert(i, "y");
+                            i++;
+                        }
+                    }
+                    else
+                    {
                         writeTo = writeTo.Insert(i, ruleY);
                         i += ruleY.Length;
-                   // }
+                    }
                     break;
                 case '[':
-                    //if (ruleBO == "")
-                    //{
-                    //    writeTo = writeTo.Insert(i, "[");
-                    //    i += 1;
-                    //}
-                    //else
-                    //{
-                        writeTo = writeTo.Insert(i, ruleBO);
-                        i += ruleBO.Length;
-                  //  }
+
+                    writeTo = writeTo.Insert(i, ruleBO);
+                    i += ruleBO.Length;
+
                     break;
 
                 case ']':
-                    //if (ruleBC == "")
-                    //{
-                    //    writeTo = writeTo.Insert(i, "]");
-                    //    i += 1;
-                    //}
-                    //else
-                    //{
-                        writeTo = writeTo.Insert(i, ruleBC);
-                        i += ruleBC.Length;
-                   // }
+
+                    writeTo = writeTo.Insert(i, ruleBC);
+                    i += ruleBC.Length;
+
                     break;
                 case '+':
-                
-                    //if (ruleP == "")
-                    //{
-                    //    writeTo = writeTo.Insert(i, "+");
-                    //    i += 1;
-                    //}
-                    //else
-                    //{
-                        writeTo = writeTo.Insert(i, ruleP);
-                        i += ruleP.Length;
-                    //}
+
+
+                    writeTo = writeTo.Insert(i, ruleP);
+                    i += ruleP.Length;
+
                     break;
 
                 case '-':
                 case '−':
-             
-                    //if (ruleN == "")
-                    //{
-                    //    writeTo = writeTo.Insert(i, "-");
-                    //    i += 1;
-                    //}
-                    //else
-                    //{
-                        writeTo = writeTo.Insert(i, ruleN);
-                        i += ruleN.Length;
-                   // }
+
+
+                    writeTo = writeTo.Insert(i, ruleN);
+                    i += ruleN.Length;
+
                     break;
 
                 default:
@@ -239,4 +257,82 @@ public class ReWriter : MonoBehaviour
 
     }
 
+    private void SubmitInput(string arg0)
+    {
+        //  string currentText = output.text; //maybe add ToString()?
+        //string newText = currentText + "\n" + arg0;
+        //output.text = newText;
+        //input.text = "";
+        //input.ActivateInputField();
+        print(arg0);
+        fileName = arg0;
+    }
+
+    public void save()
+    {
+        //12 lines
+        StreamWriter sw = new StreamWriter(fileName + ".txt");
+        sw.WriteLine(Axiom);//axiom
+        sw.WriteLine(iterations);//iterations
+        sw.WriteLine(stochY);
+        sw.WriteLine(stochX);
+        sw.WriteLine(stochF);
+        sw.WriteLine(ruleX);
+        sw.WriteLine(ruleF);
+        sw.WriteLine(ruleY);
+        sw.WriteLine(ruleBO);
+        sw.WriteLine(ruleBC);
+        sw.WriteLine(ruleN);
+        sw.WriteLine(ruleP);
+        sw.WriteLine(getAngle());
+        sw.Close();
+    }
+
+    public void load()
+    {
+        StreamReader sr = new StreamReader(fileName + ".txt");
+        Axiom = sr.ReadLine();
+        iterations = int.Parse(sr.ReadLine());
+        stochY = bool.Parse(sr.ReadLine());
+        stochX = bool.Parse(sr.ReadLine());
+        stochF = bool.Parse(sr.ReadLine());
+        ruleX = sr.ReadLine();
+        ruleF = sr.ReadLine();
+        ruleY = sr.ReadLine();
+        ruleBO = sr.ReadLine();
+        ruleBC = sr.ReadLine();
+        ruleN = sr.ReadLine();
+        ruleP = sr.ReadLine();
+        forceSetAngle(float.Parse(sr.ReadLine()));
+        sr.Close();
+
+    }
+    private bool rndBool(float value)
+    {
+        if (Random.value >= value / 100)//between 0-1
+        { return true; }
+        else
+        { return false; }
+    }
+
+    private float getAngle()
+    {
+        Interpreter inter = GetComponent<Interpreter>();
+        return inter.angle;
+    }
+
+    private void forceSetAngle(float m_angle)
+    {
+        Interpreter inter = GetComponent<Interpreter>();
+        inter.angle = m_angle;
+    }
+
 }
+
+
+
+
+
+
+
+
