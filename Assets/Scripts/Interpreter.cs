@@ -52,6 +52,7 @@ public class Interpreter : MonoBehaviour
     {
         //places turtle in the middle of the screen, 20X closer than the far plain
         turtle.transform.position = Camera.main.ScreenToWorldPoint(new Vector3(Screen.width / 2, Screen.height / 2, Camera.main.farClipPlane / 20));
+        turtle.transform.rotation = Quaternion.LookRotation(Vector3.forward);
     }
 
     private void mainLoop()
@@ -151,7 +152,9 @@ public class Interpreter : MonoBehaviour
                     switch (mode)
                     {
                         case 1:
-                            P2D();
+                            //P2D();
+                            PTree();
+
                             break;
                         case 2:
                             //extra mode
@@ -167,7 +170,8 @@ public class Interpreter : MonoBehaviour
                     switch (mode)
                     {
                         case 1:
-                            N2D();
+                            // N2D();
+                            NTree();
                             break;
                         case 2:
                             //extra mode
@@ -215,10 +219,16 @@ public class Interpreter : MonoBehaviour
 
     //varience in angle
     private void PTree()
-    { }
+    {
+        float tempAngle = Random.Range(angle - 5, angle + 5);
+        turtle.transform.Rotate(new Vector3(0.0f, 0.0f, -tempAngle));
+    }
 
     private void NTree()
-    { }
+    {
+        float tempAngle = Random.Range(angle - 5, angle + 5);
+        turtle.transform.Rotate(new Vector3(0.0f, 0.0f, tempAngle));
+    }
 
     //comon functions
     private void Forward()
