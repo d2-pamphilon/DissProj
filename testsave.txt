@@ -1,0 +1,13 @@
+f++f++f
+4
+False
+False
+False
+ff
+f-f++f-f
+y
+[
+]
+-
++
+60

@@ -9,13 +9,11 @@ public class ReWriter : MonoBehaviour
     public string Axiom;
     public string StringA;//move to private
     public string StringB;//move to private
-    public bool flip = true;  //true = A    false = B //move to private - get, set
-    public bool generate = false;//move to private - get set
     public int iterations;
-    public string fileName;
     public bool stochY;
     public bool stochX;
     public bool stochF;
+    public int stochChance;
 
     //  \/move to private \/ - use ui for inputs
     public string ruleX;
@@ -26,25 +24,30 @@ public class ReWriter : MonoBehaviour
     public string ruleN;
     public string ruleP;
 
+    private bool flip = true;  //true = A    false = B
+    private bool generate = false;
+    private string fileName;
+
+    //file name ui setup
     InputField input;
     InputField.SubmitEvent se;
 
     void Start()
     {
         //set up everything
-        Axiom = "f";
-        //StringA = "F";
+        Axiom = "";
         iterations = 1;
         ruleX = "x";
-        ruleF = "f";//1FF-[2-F+F+F]+[1+F-F-F]
+        ruleF = "f";
         ruleY = "y";
         ruleBO = "[";
         ruleBC = "]";
         ruleP = "+";
         ruleN = "-";
-        stochY = true;
-        stochX = true;
-        stochF = true;
+        stochY = false;
+        stochX = false;
+        stochF = false;
+        //set up listening to input field for filename
         input = GameObject.FindGameObjectWithTag("Input").GetComponent<InputField>();
         se = new InputField.SubmitEvent();
         se.AddListener(SubmitInput);
@@ -52,7 +55,6 @@ public class ReWriter : MonoBehaviour
 
     }
 
-    // Update is called once per frame
     void Update()
     {
         //if space is pressed, run for x amount of iterations
@@ -62,6 +64,11 @@ public class ReWriter : MonoBehaviour
             if (StringA == "" && StringB == "")
             {
                 StringA = Axiom;
+                //rewrite string for n iterations
+                for (int i = 0; i < iterations; i++)
+                {
+                    rewrite();
+                }
             }
             else
             {
@@ -72,9 +79,10 @@ public class ReWriter : MonoBehaviour
             }
 
         }
-
+        // resets inputs
         if (Input.GetKeyDown("r"))
         { reset(); }
+        //shortcut for generation
         if (Input.GetKeyDown("p"))
         { generate = true; }
     }
@@ -83,7 +91,6 @@ public class ReWriter : MonoBehaviour
     {
         //clear strings
         deleteA();
-        /// StringA = "F";
         deleteB();
         //set flip to default 
         flip = true;
@@ -113,11 +120,14 @@ public class ReWriter : MonoBehaviour
         int i = 0;
         //temp string to write to
         string writeTo = "";
+
+        //look at every character in the string
         foreach (char c in readFrom)
         {
             switch (c)
             {
                 //1 and 2 just stay as themselves
+                //1 and 2 are used for colour changing
                 case '1':
                     writeTo = writeTo.Insert(i, "1");
                     i += 1;
@@ -129,9 +139,10 @@ public class ReWriter : MonoBehaviour
                 //will take caps or lowercase
                 case 'x':
                 case 'X':
+                    //if using stochtiatic grammer chance rule wont apply
                     if (stochX)
                     {
-                        if (rndBool(50))
+                        if (rndBool(stochChance))
                         {
                             writeTo = writeTo.Insert(i, ruleX);
                             i += ruleX.Length;
@@ -144,19 +155,18 @@ public class ReWriter : MonoBehaviour
                     }
                     else
                     {
+                        //add rule to string
                         writeTo = writeTo.Insert(i, ruleX);
+                        //incress i to new string length
                         i += ruleX.Length;
                     }
 
-
-
                     break;
-
                 case 'f':
                 case 'F':
                     if (stochF)
                     {
-                        if (rndBool(50))
+                        if (rndBool(stochChance))
                         {
                             writeTo = writeTo.Insert(i, ruleF);
                             i += ruleF.Length;
@@ -178,7 +188,7 @@ public class ReWriter : MonoBehaviour
                 case 'Y':
                     if (stochY)
                     {
-                        if (rndBool(50))
+                        if (rndBool(stochChance))
                         {
                             writeTo = writeTo.Insert(i, ruleY);
                             i += ruleY.Length;
@@ -210,21 +220,14 @@ public class ReWriter : MonoBehaviour
                     break;
                 case '+':
 
-
                     writeTo = writeTo.Insert(i, ruleP);
                     i += ruleP.Length;
-
                     break;
-
                 case '-':
                 case '−':
-
-
                     writeTo = writeTo.Insert(i, ruleN);
                     i += ruleN.Length;
-
                     break;
-
                 default:
                     //debug
                     break;
@@ -258,22 +261,18 @@ public class ReWriter : MonoBehaviour
     }
 
     private void SubmitInput(string arg0)
-    {
-        //  string currentText = output.text; //maybe add ToString()?
-        //string newText = currentText + "\n" + arg0;
-        //output.text = newText;
-        //input.text = "";
-        //input.ActivateInputField();
-        print(arg0);
+    {  
+        //print(arg0);
         fileName = arg0;
     }
 
     public void save()
     {
-        //12 lines
+        //open file of name given
+        //write a line for any info to be stored
         StreamWriter sw = new StreamWriter(fileName + ".txt");
-        sw.WriteLine(Axiom);//axiom
-        sw.WriteLine(iterations);//iterations
+        sw.WriteLine(Axiom);
+        sw.WriteLine(iterations);
         sw.WriteLine(stochY);
         sw.WriteLine(stochX);
         sw.WriteLine(stochF);
@@ -290,6 +289,7 @@ public class ReWriter : MonoBehaviour
 
     public void load()
     {
+        //open file and read in in same order as saved
         StreamReader sr = new StreamReader(fileName + ".txt");
         Axiom = sr.ReadLine();
         iterations = int.Parse(sr.ReadLine());
@@ -307,7 +307,8 @@ public class ReWriter : MonoBehaviour
         sr.Close();
 
     }
-    private bool rndBool(float value)
+
+    private bool rndBool(float value)//given value 0-100 returns a bool based on that % chance
     {
         if (Random.value >= value / 100)//between 0-1
         { return true; }
@@ -315,18 +316,22 @@ public class ReWriter : MonoBehaviour
         { return false; }
     }
 
-    private float getAngle()
+    private float getAngle()//gets angle from interpriter
     {
         Interpreter inter = GetComponent<Interpreter>();
         return inter.angle;
     }
 
-    private void forceSetAngle(float m_angle)
+    private void forceSetAngle(float m_angle)//sets interpriter angle
     {
         Interpreter inter = GetComponent<Interpreter>();
         inter.angle = m_angle;
     }
 
+    public bool getGen()//returns if generate is true
+    { return generate; }
+    public void setGen(bool setter)//sets generate
+    { generate = setter; }
 }
 
 
