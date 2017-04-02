@@ -23,6 +23,7 @@ public class Interpreter : MonoBehaviour
     public GameObject cutOff;
     [SerializeField]
     pass state;
+    public bool Prune;
 
     private static Stack<Vector3> thePosStack = new Stack<Vector3>();
     private static Stack<Quaternion> theRotStack = new Stack<Quaternion>();
@@ -225,14 +226,14 @@ public class Interpreter : MonoBehaviour
         {
             if (state == pass.first)
             {
-               parentObject = Instantiate(trunk, turtle.transform.position, turtle.transform.rotation);
-                
+                parentObject = Instantiate(trunk, turtle.transform.position, turtle.transform.rotation);
+
                 state = pass.main;
-          }
+            }
             if (state == pass.main)
             {
-                Instantiate(trunk, turtle.transform.position, turtle.transform.rotation,parentObject.transform);
-             
+                Instantiate(trunk, turtle.transform.position, turtle.transform.rotation, parentObject.transform);
+
             }
         }
         turtle.transform.Translate(Vector3.up * 2);
@@ -262,13 +263,21 @@ public class Interpreter : MonoBehaviour
     //comon functions
     private void FTree()
     {
-        if (insideCheck(turtle.transform.position))
+        if (Prune)
         {
-            //create trunk at turtles location and rotation
-            Instantiate(trunk, turtle.transform.position, turtle.transform.rotation);
-            //move turtle forward
+            if (insideCheck(turtle.transform.position))
+            {
+                //create trunk at turtles location and rotation
+                Instantiate(trunk, turtle.transform.position, turtle.transform.rotation);
+                //move turtle forward
 
+            }
         }
+        else
+        {
+            Instantiate(trunk, turtle.transform.position, turtle.transform.rotation);
+        }
+
         turtle.transform.Translate(Vector3.up * 2);
         //add rotation for simple 3d 
         turtle.transform.Rotate(new Vector3(0f, rotationOfTrunk, 0f));
@@ -332,6 +341,21 @@ public class Interpreter : MonoBehaviour
         }
 
     }
+
+    public void setPrune(bool temp)
+    {
+        Prune = temp;
+
+    }
+    public void setAngle(float temp)
+    {
+        angle = (int)temp;
+    }
+    public void setTrunkRot(float temp)
+    {
+        rotationOfTrunk = (int)temp;
+    }
+
 }
 
 

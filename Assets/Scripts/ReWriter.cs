@@ -48,10 +48,11 @@ public class ReWriter : MonoBehaviour
         stochX = false;
         stochF = false;
         //set up listening to input field for filename
-        input = GameObject.FindGameObjectWithTag("Input").GetComponent<InputField>();
-        se = new InputField.SubmitEvent();
-        se.AddListener(SubmitInput);
-        input.onEndEdit = se;
+
+        //input = GameObject.FindGameObjectWithTag("Input").GetComponent<InputField>();
+        //se = new InputField.SubmitEvent();
+        //se.AddListener(SubmitInput);
+        //input.onEndEdit = se;
 
     }
 
@@ -334,6 +335,73 @@ public class ReWriter : MonoBehaviour
     { return generate; }
     public void setGen(bool setter)//sets generate
     { generate = setter; }
+
+    public void setFileName(string text)
+    {
+        fileName = text;
+    }
+
+    public void setAxiom(string text)
+    {
+        Axiom = text;
+    }
+
+    public void setRuleX(string text)
+    {
+        ruleX = text;
+    }
+
+    public void setRuleY(string text)
+    {
+        ruleY = text;
+    }
+    public void setRuleF(string text)
+    {
+        ruleF= text;
+    }
+
+    public void setRuleBO(string text)
+    {
+        ruleBO = text;
+    }
+    public void setRuleBC(string text)
+    {
+       ruleBC = text;
+    }
+
+    public void setRuleN(string text)
+    {
+        ruleN= text;
+    }
+    public void setRuleP(string text)
+    {
+        ruleP= text;
+    }
+    public void setStochY(bool temp)
+    {
+
+        stochY = temp;
+    }
+    public void setStochX(bool temp)
+    {
+
+        stochX = temp;
+    }
+    public void setStochF(bool temp)
+    {
+
+        stochF = temp;
+    }
+
+    public void setIterations(float temp)
+    {
+        iterations = (int)temp;
+    }
+
+    public void setStochChance(float temp)
+    {
+        stochChance = (int)temp;
+    }
 }
 
 
