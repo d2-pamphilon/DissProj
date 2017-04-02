@@ -133,10 +133,10 @@ public class Interpreter : MonoBehaviour
                     //can have multiple "modes" form same code
                     switch (mode)
                     {
-                        case 1:
+                        case 0:
                             X2D();
                             break;
-                        case 2:
+                        case 1:
                             XTree();
                             //extra mode
                             break;
@@ -150,10 +150,10 @@ public class Interpreter : MonoBehaviour
                 case 'F':
                     switch (mode)
                     {
-                        case 1:
+                        case 0:
                             F2D();
                             break;
-                        case 2:
+                        case 1:
                             FTree();
                             //extra mode
                             break;
@@ -167,10 +167,10 @@ public class Interpreter : MonoBehaviour
                 case 'Y':
                     switch (mode)
                     {
-                        case 1:
+                        case 0:
                             Y2D();
                             break;
-                        case 2:
+                        case 1:
                             YTree();
                             //extra mode
                             break;
@@ -189,10 +189,10 @@ public class Interpreter : MonoBehaviour
                 case '+':
                     switch (mode)
                     {
-                        case 1:
+                        case 0:
                             P2D();
                             break;
-                        case 2:
+                        case 1:
                             PTree();
                             //extra mode
                             break;
@@ -205,10 +205,10 @@ public class Interpreter : MonoBehaviour
                 case '−':
                     switch (mode)
                     {
-                        case 1:
+                        case 0:
                             N2D();
                             break;
-                        case 2:
+                        case 1:
                             NTree();
                             //extra mode
                             break;

@@ -297,6 +297,7 @@ public class ReWriter : MonoBehaviour
 
     public void load()//make set ui
     {
+        float t_angle;
         //open file and read in in same order as saved
         StreamReader sr = new StreamReader(fileName + ".txt");
         Axiom = sr.ReadLine();
@@ -311,9 +312,10 @@ public class ReWriter : MonoBehaviour
         ruleBC = sr.ReadLine();
         ruleN = sr.ReadLine();
         ruleP = sr.ReadLine();
-        forceSetAngle(float.Parse(sr.ReadLine()));
+        t_angle = float.Parse(sr.ReadLine());
         sr.Close();
 
+        forceSetAngle(t_angle);
         UiC.setText("Axiom", Axiom);
         UiC.setText("Rule X", ruleX);
         UiC.setText("Rule F", ruleF);
@@ -323,6 +325,12 @@ public class ReWriter : MonoBehaviour
         UiC.setText("Rule Plus", ruleP);
         UiC.setText("Rule Minus", ruleN);
 
+        UiC.setCheckbox("Y", stochY);
+        UiC.setCheckbox("F", stochF);
+        UiC.setCheckbox("X", stochX);
+
+        UiC.setSliderInt("Iterations", iterations);
+        UiC.setSliderFloat("Angle", t_angle);
 
 
     }

@@ -55,8 +55,83 @@ public class UiControler : MonoBehaviour
             }
         }
 
-
     }
+
+    public void setSliderInt(string name, int value)
+    {
+        foreach (GameObject T in UIObjects)
+        {
+            if (T.name == name)
+            {
+                T.GetComponent<Slider>().value = value;
+            }
+        }
+    }
+
+    public void setSliderFloat(string name, float value)
+    {
+        foreach (GameObject T in UIObjects)
+        {
+            if (T.name == name)
+            {
+                T.GetComponent<Slider>().value = value;
+            }
+        }
+    }
+
+    public void setCheckbox(string name, bool on_off)
+    {
+        foreach (GameObject T in UIObjects)
+        {
+            if (T.name == name)
+            {
+                T.GetComponent<Toggle>().isOn = on_off;
+            }
+        }
+    }
+
+    public void setAngleText(float temp)
+    {
+        foreach (GameObject T in UIObjects)
+        {
+            if (T.name == "Angle %")
+            {
+                T.GetComponent<Text>().text = temp.ToString() + " %";
+            }
+        }
+    }
+
+    public void setIterationText(float temp)
+    {
+        foreach (GameObject T in UIObjects)
+        {
+            if (T.name == "It %")
+            {
+                T.GetComponent<Text>().text = temp.ToString() + " %";
+            }
+        }
+    }
+    public void setStochText(float temp)
+    {
+        foreach (GameObject T in UIObjects)
+        {
+            if (T.name == "Stoch %")
+            {
+                T.GetComponent<Text>().text = temp.ToString() + " %";
+            }
+        }
+    }
+    public void setRotText(float temp)
+    {
+        foreach (GameObject T in UIObjects)
+        {
+            if (T.name == "Rot %")
+            {
+                T.GetComponent<Text>().text = temp.ToString() + " %";
+            }
+        }
+    }
+
 
 
 }
