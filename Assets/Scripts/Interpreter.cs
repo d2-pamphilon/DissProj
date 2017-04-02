@@ -4,6 +4,13 @@ using System.Collections.Generic;
 
 public class Interpreter : MonoBehaviour
 {
+    private enum pass
+    {
+        none,
+        first,
+        main,
+        save
+    }
 
     public string interSting;//move to private
     public GameObject turtle;
@@ -13,31 +20,52 @@ public class Interpreter : MonoBehaviour
     public float angle;
     public float rotationOfTrunk;
     public int mode; //cant pass enum into switch witout converting to int, so just have int instead
+    public GameObject cutOff;
+    [SerializeField]
+    pass state;
 
     private static Stack<Vector3> thePosStack = new Stack<Vector3>();
     private static Stack<Quaternion> theRotStack = new Stack<Quaternion>();
     private ReWriter reWrite;
+    private GameObject parentObject;
 
 
     void Start()
     {
         //get ReWriting script
         reWrite = GetComponent<ReWriter>();
+        state = pass.none;
     }
 
     void Update()
     {
-        //if generate bool is true
-        if (reWrite.getGen())
+        if (state == pass.none)
         {
-            //get the final string for interptiation
+
+
+        }
+        if (state == pass.first || state == pass.main)
+        {
             interSting = reWrite.getFinalString();
-            //place turtle in center of screen
             centerTurtle();
             mainLoop();
-            //turn gen back off
-            reWrite.setGen(false);
+            state = pass.none;
         }
+        if (state == pass.save)
+        {
+            //create prefab
+            //child all objects 
+            //save to
+        }
+
+        //if generate bool is true
+        //if (reWrite.getGen())
+        //{
+        //    //get the final string for interptiation
+
+        //    //turn gen back off
+        //    reWrite.setGen(false);
+        //}
 
         //if reset key pressed 
         if (Input.GetKeyDown("r"))
@@ -48,10 +76,28 @@ public class Interpreter : MonoBehaviour
 
         }
     }
+    bool insideCheck(Vector3 curPos)
+    {
+        //if (cutOff.GetComponent<Collider>().bounds.Contains(curPos))
+        //{ return true; }
+        //else
+        //{ return false; }
+
+        if (Vector3.Distance(cutOff.transform.position, curPos) < cutOff.GetComponent<SphereCollider>().radius)
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+
     private void centerTurtle()
     {
         //places turtle in the middle of the screen, 20X closer than the far plain
         turtle.transform.position = Camera.main.ScreenToWorldPoint(new Vector3(Screen.width / 2, Screen.height / 2, Camera.main.farClipPlane / 20));
+        cutOff.transform.position = Camera.main.ScreenToWorldPoint(new Vector3(Screen.width / 2, Screen.height / 2, Camera.main.farClipPlane / 20));
         turtle.transform.rotation = Quaternion.LookRotation(Vector3.forward);
     }
 
@@ -174,10 +220,25 @@ public class Interpreter : MonoBehaviour
 
     private void F2D()
     {
-        //create trunk at turtles location and rotation
-        Instantiate(trunk, turtle.transform.position, turtle.transform.rotation);
-        //move turtle forward
+
+        if (insideCheck(turtle.transform.position))
+        {
+            if (state == pass.first)
+            {
+               parentObject = Instantiate(trunk, turtle.transform.position, turtle.transform.rotation);
+                
+                state = pass.main;
+          }
+            if (state == pass.main)
+            {
+                Instantiate(trunk, turtle.transform.position, turtle.transform.rotation,parentObject.transform);
+             
+            }
+        }
         turtle.transform.Translate(Vector3.up * 2);
+
+
+
     }
 
     private void Y2D()
@@ -201,12 +262,17 @@ public class Interpreter : MonoBehaviour
     //comon functions
     private void FTree()
     {
-        //create trunk at turtles location and rotation
-        Instantiate(trunk, turtle.transform.position, turtle.transform.rotation);
-        //move turtle forward
+        if (insideCheck(turtle.transform.position))
+        {
+            //create trunk at turtles location and rotation
+            Instantiate(trunk, turtle.transform.position, turtle.transform.rotation);
+            //move turtle forward
+
+        }
         turtle.transform.Translate(Vector3.up * 2);
         //add rotation for simple 3d 
         turtle.transform.Rotate(new Vector3(0f, rotationOfTrunk, 0f));
+
     }
     private void XTree()
     {/*nothing atm*/ }
@@ -244,6 +310,27 @@ public class Interpreter : MonoBehaviour
         turtle.transform.position = thePosStack.Pop();
         //rotate turtle to rotation on stack
         turtle.transform.rotation = theRotStack.Pop();
+    }
+
+    public void setState(string g_state)
+    {
+        switch (g_state)
+        {
+            case "none":
+                state = pass.none;
+                break;
+            case "first":
+                state = pass.first;
+                break;
+            case "main":
+                state = pass.main;
+                break;
+            case "save":
+                state = pass.save;
+                break;
+
+        }
+
     }
 }
 

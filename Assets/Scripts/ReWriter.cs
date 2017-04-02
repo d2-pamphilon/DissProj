@@ -84,7 +84,9 @@ public class ReWriter : MonoBehaviour
         { reset(); }
         //shortcut for generation
         if (Input.GetKeyDown("p"))
-        { generate = true; }
+        {
+            GetComponent<Interpreter>().setState("first");
+        }//generate = true; }
     }
 
     private void reset()
