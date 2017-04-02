@@ -83,14 +83,22 @@ public class Interpreter : MonoBehaviour
         //{ return true; }
         //else
         //{ return false; }
-
-        if (Vector3.Distance(cutOff.transform.position, curPos) < cutOff.GetComponent<SphereCollider>().radius)
+        if (Prune)
         {
-            return true;
+            if (Vector3.Distance(cutOff.transform.position, curPos) < cutOff.GetComponent<SphereCollider>().radius)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+
         }
         else
         {
-            return false;
+            return true;
+
         }
     }
 
@@ -263,20 +271,15 @@ public class Interpreter : MonoBehaviour
     //comon functions
     private void FTree()
     {
-        if (Prune)
-        {
-            if (insideCheck(turtle.transform.position))
-            {
-                //create trunk at turtles location and rotation
-                Instantiate(trunk, turtle.transform.position, turtle.transform.rotation);
-                //move turtle forward
 
-            }
-        }
-        else
+        if (insideCheck(turtle.transform.position))
         {
+            //create trunk at turtles location and rotation
             Instantiate(trunk, turtle.transform.position, turtle.transform.rotation);
+            //move turtle forward
+
         }
+
 
         turtle.transform.Translate(Vector3.up * 2);
         //add rotation for simple 3d 
@@ -321,6 +324,7 @@ public class Interpreter : MonoBehaviour
         turtle.transform.rotation = theRotStack.Pop();
     }
 
+    //setters
     public void setState(string g_state)
     {
         switch (g_state)
@@ -349,11 +353,15 @@ public class Interpreter : MonoBehaviour
     }
     public void setAngle(float temp)
     {
-        angle = (int)temp;
+        angle = temp;
     }
     public void setTrunkRot(float temp)
     {
         rotationOfTrunk = (int)temp;
+    }
+    public void setMode(int temp)
+    {
+        mode = temp;
     }
 
 }

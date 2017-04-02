@@ -27,6 +27,7 @@ public class ReWriter : MonoBehaviour
     private bool flip = true;  //true = A    false = B
     private bool generate = false;
     private string fileName;
+    private UiControler UiC;
 
     //file name ui setup
     InputField input;
@@ -47,6 +48,10 @@ public class ReWriter : MonoBehaviour
         stochY = false;
         stochX = false;
         stochF = false;
+
+        UiC = GameObject.FindGameObjectWithTag("GameController").GetComponent<UiControler>();
+
+
         //set up listening to input field for filename
 
         //input = GameObject.FindGameObjectWithTag("Input").GetComponent<InputField>();
@@ -290,7 +295,7 @@ public class ReWriter : MonoBehaviour
         sw.Close();
     }
 
-    public void load()
+    public void load()//make set ui
     {
         //open file and read in in same order as saved
         StreamReader sr = new StreamReader(fileName + ".txt");
@@ -308,6 +313,17 @@ public class ReWriter : MonoBehaviour
         ruleP = sr.ReadLine();
         forceSetAngle(float.Parse(sr.ReadLine()));
         sr.Close();
+
+        UiC.setText("Axiom", Axiom);
+        UiC.setText("Rule X", ruleX);
+        UiC.setText("Rule F", ruleF);
+        UiC.setText("Rule Y", ruleY);
+        UiC.setText("Rule Open Bracket", ruleBO);
+        UiC.setText("Rule Closed Bracket", ruleBC);
+        UiC.setText("Rule Plus", ruleP);
+        UiC.setText("Rule Minus", ruleN);
+
+
 
     }
 
@@ -328,7 +344,7 @@ public class ReWriter : MonoBehaviour
     private void forceSetAngle(float m_angle)//sets interpriter angle
     {
         Interpreter inter = GetComponent<Interpreter>();
-        inter.angle = m_angle;
+        inter.setAngle(m_angle);
     }
 
     public bool getGen()//returns if generate is true
