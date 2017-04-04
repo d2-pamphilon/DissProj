@@ -6,119 +6,105 @@ using UnityEngine.UI;
 
 public class ReWriter : MonoBehaviour
 {
-    public string Axiom;
-    public string StringA;//move to private
-    public string StringB;//move to private
-    public int iterations;
-    public bool stochY;
-    public bool stochX;
-    public bool stochF;
-    public int stochChance;
+    //breaks if private
+    public string StringA;
+    public string StringB;
 
-    //  \/move to private \/ - use ui for inputs
-    public string ruleX;
-    public string ruleF;
-    public string ruleY;
-    public string ruleBO;
-    public string ruleBC;
-    public string ruleN;
-    public string ruleP;
 
-    private bool flip = true;  //true = A    false = B
-    private bool generate = false;
-    private string fileName;
-    private UiControler UiC;
+    private string m_axiom;    
+    private int m_iterations;
+    private bool m_stochY;
+    private bool m_stochX;
+    private bool m_stochF;
+    private int m_stochChance;
 
-    //file name ui setup
-    InputField input;
-    InputField.SubmitEvent se;
+    private string m_ruleX;
+    private string m_ruleF;
+    private string m_ruleY;
+    private string m_ruleBO;
+    private string m_ruleBC;
+    private string m_ruleN;
+    private string m_ruleP;
+
+    private bool m_flip = true;  //true = A    false = B
+    private bool m_generate = false;
+    private string m_fileName;
+    private UiControler m_UiC;
 
     void Start()
     {
-        //set up everything
-        Axiom = "";
-        iterations = 1;
-        ruleX = "x";
-        ruleF = "f";
-        ruleY = "y";
-        ruleBO = "[";
-        ruleBC = "]";
-        ruleP = "+";
-        ruleN = "-";
-        stochY = false;
-        stochX = false;
-        stochF = false;
+        //defualt everything
+        m_axiom = "";
+        m_iterations = 1;
+        m_ruleX = "x";
+        m_ruleF = "f";
+        m_ruleY = "y";
+        m_ruleBO = "[";
+        m_ruleBC = "]";
+        m_ruleP = "+";
+        m_ruleN = "-";
+        m_stochY = false;
+        m_stochX = false;
+        m_stochF = false;
 
-        UiC = GameObject.FindGameObjectWithTag("GameController").GetComponent<UiControler>();
-
-
-        //set up listening to input field for filename
-
-        //input = GameObject.FindGameObjectWithTag("Input").GetComponent<InputField>();
-        //se = new InputField.SubmitEvent();
-        //se.AddListener(SubmitInput);
-        //input.onEndEdit = se;
-
+        //get refrence of ui controller
+        m_UiC = GameObject.FindGameObjectWithTag("GameController").GetComponent<UiControler>();
     }
 
-    void Update()
+  
+    public void GO()
     {
-        //if space is pressed, run for x amount of iterations
-        if (Input.GetKeyDown("space"))
+        //if both strings empty take axiom as stingA
+        //shouldnt need this 
+        //for security incase user breaks it somehow
+        if (StringA == "" && StringB == "")
         {
-            //  if strings are empty, use axiom
-            if (StringA == "" && StringB == "")
+            StringA = m_axiom;
+            //rewrite string for n iterations
+            for (int i = 0; i < m_iterations; i++)
             {
-                StringA = Axiom;
-                //rewrite string for n iterations
-                for (int i = 0; i < iterations; i++)
-                {
-                    rewrite();
-                }
+                rewrite();
             }
-            else
-            {
-                for (int i = 0; i < iterations; i++)
-                {
-                    rewrite();
-                }
-            }
-
         }
-        // resets inputs
-        if (Input.GetKeyDown("r"))
-        { reset(); }
-        //shortcut for generation
-        if (Input.GetKeyDown("p"))
+        else
         {
-            GetComponent<Interpreter>().setState("first");
-        }//generate = true; }
+            for (int i = 0; i < m_iterations; i++)
+            {
+                rewrite();
+            }
+        }
+        //sets interpriter to start generating
+        GetComponent<Interpreter>().setState("first");
+
     }
 
-    private void reset()
+    public void reset()
     {
         //clear strings
         deleteA();
         deleteB();
+
+        foreach (GameObject T in GameObject.FindGameObjectsWithTag("Player"))
+        { Destroy(T); }
         //set flip to default 
-        flip = true;
+        m_flip = true;
     }
 
     private void rewrite()
     {
         //write to stringB from A
-        if (flip)
+        if (m_flip)
         {
             deleteB();
             StringB = stringReWrite(StringA);
-            flip = false;
+            m_flip = false;
         }
         //write to stringA from B
         else
         {
             deleteA();
             StringA = stringReWrite(StringB);
-            flip = true;
+            m_flip = true;
         }
     }
 
@@ -148,12 +134,12 @@ public class ReWriter : MonoBehaviour
                 case 'x':
                 case 'X':
                     //if using stochtiatic grammer chance rule wont apply
-                    if (stochX)
+                    if (m_stochX)
                     {
-                        if (rndBool(stochChance))
+                        if (rndBool(m_stochChance))
                         {
-                            writeTo = writeTo.Insert(i, ruleX);
-                            i += ruleX.Length;
+                            writeTo = writeTo.Insert(i, m_ruleX);
+                            i += m_ruleX.Length;
                         }
                         else
                         {
@@ -164,20 +150,20 @@ public class ReWriter : MonoBehaviour
                     else
                     {
                         //add rule to string
-                        writeTo = writeTo.Insert(i, ruleX);
+                        writeTo = writeTo.Insert(i, m_ruleX);
                         //incress i to new string length
-                        i += ruleX.Length;
+                        i += m_ruleX.Length;
                     }
 
                     break;
                 case 'f':
                 case 'F':
-                    if (stochF)
+                    if (m_stochF)
                     {
-                        if (rndBool(stochChance))
+                        if (rndBool(m_stochChance))
                         {
-                            writeTo = writeTo.Insert(i, ruleF);
-                            i += ruleF.Length;
+                            writeTo = writeTo.Insert(i, m_ruleF);
+                            i += m_ruleF.Length;
                         }
                         else
                         {
@@ -187,19 +173,19 @@ public class ReWriter : MonoBehaviour
                     }
                     else
                     {
-                        writeTo = writeTo.Insert(i, ruleF);
-                        i += ruleF.Length;
+                        writeTo = writeTo.Insert(i, m_ruleF);
+                        i += m_ruleF.Length;
                     }
 
                     break;
                 case 'y':
                 case 'Y':
-                    if (stochY)
+                    if (m_stochY)
                     {
-                        if (rndBool(stochChance))
+                        if (rndBool(m_stochChance))
                         {
-                            writeTo = writeTo.Insert(i, ruleY);
-                            i += ruleY.Length;
+                            writeTo = writeTo.Insert(i, m_ruleY);
+                            i += m_ruleY.Length;
                         }
                         else
                         {
@@ -209,32 +195,32 @@ public class ReWriter : MonoBehaviour
                     }
                     else
                     {
-                        writeTo = writeTo.Insert(i, ruleY);
-                        i += ruleY.Length;
+                        writeTo = writeTo.Insert(i, m_ruleY);
+                        i += m_ruleY.Length;
                     }
                     break;
                 case '[':
 
-                    writeTo = writeTo.Insert(i, ruleBO);
-                    i += ruleBO.Length;
+                    writeTo = writeTo.Insert(i, m_ruleBO);
+                    i += m_ruleBO.Length;
 
                     break;
 
                 case ']':
 
-                    writeTo = writeTo.Insert(i, ruleBC);
-                    i += ruleBC.Length;
+                    writeTo = writeTo.Insert(i, m_ruleBC);
+                    i += m_ruleBC.Length;
 
                     break;
                 case '+':
 
-                    writeTo = writeTo.Insert(i, ruleP);
-                    i += ruleP.Length;
+                    writeTo = writeTo.Insert(i, m_ruleP);
+                    i += m_ruleP.Length;
                     break;
                 case '-':
                 case '−':
-                    writeTo = writeTo.Insert(i, ruleN);
-                    i += ruleN.Length;
+                    writeTo = writeTo.Insert(i, m_ruleN);
+                    i += m_ruleN.Length;
                     break;
                 default:
                     //debug
@@ -246,6 +232,7 @@ public class ReWriter : MonoBehaviour
         return writeTo;
     }
 
+  
 
     private void deleteA()//Clears string A
     {
@@ -261,36 +248,36 @@ public class ReWriter : MonoBehaviour
 
     public string getFinalString()//Getter for strings
     {
-        if (flip)
+        if (m_flip)
         { return StringA; }
         else
         { return StringB; }
 
     }
 
-    private void SubmitInput(string arg0)
-    {  
-        //print(arg0);
-        fileName = arg0;
-    }
+    //private void SubmitInput(string arg0)
+    //{
+    //    //print(arg0);
+    //    m_fileName = arg0;
+    //}
 
     public void save()
     {
         //open file of name given
         //write a line for any info to be stored
-        StreamWriter sw = new StreamWriter(fileName + ".txt");
-        sw.WriteLine(Axiom);
-        sw.WriteLine(iterations);
-        sw.WriteLine(stochY);
-        sw.WriteLine(stochX);
-        sw.WriteLine(stochF);
-        sw.WriteLine(ruleX);
-        sw.WriteLine(ruleF);
-        sw.WriteLine(ruleY);
-        sw.WriteLine(ruleBO);
-        sw.WriteLine(ruleBC);
-        sw.WriteLine(ruleN);
-        sw.WriteLine(ruleP);
+        StreamWriter sw = new StreamWriter(m_fileName + ".txt");
+        sw.WriteLine(m_axiom);
+        sw.WriteLine(m_iterations);
+        sw.WriteLine(m_stochY);
+        sw.WriteLine(m_stochX);
+        sw.WriteLine(m_stochF);
+        sw.WriteLine(m_ruleX);
+        sw.WriteLine(m_ruleF);
+        sw.WriteLine(m_ruleY);
+        sw.WriteLine(m_ruleBO);
+        sw.WriteLine(m_ruleBC);
+        sw.WriteLine(m_ruleN);
+        sw.WriteLine(m_ruleP);
         sw.WriteLine(getAngle());
         sw.Close();
     }
@@ -299,38 +286,38 @@ public class ReWriter : MonoBehaviour
     {
         float t_angle;
         //open file and read in in same order as saved
-        StreamReader sr = new StreamReader(fileName + ".txt");
-        Axiom = sr.ReadLine();
-        iterations = int.Parse(sr.ReadLine());
-        stochY = bool.Parse(sr.ReadLine());
-        stochX = bool.Parse(sr.ReadLine());
-        stochF = bool.Parse(sr.ReadLine());
-        ruleX = sr.ReadLine();
-        ruleF = sr.ReadLine();
-        ruleY = sr.ReadLine();
-        ruleBO = sr.ReadLine();
-        ruleBC = sr.ReadLine();
-        ruleN = sr.ReadLine();
-        ruleP = sr.ReadLine();
+        StreamReader sr = new StreamReader(m_fileName + ".txt");
+        m_axiom = sr.ReadLine();
+        m_iterations = int.Parse(sr.ReadLine());
+        m_stochY = bool.Parse(sr.ReadLine());
+        m_stochX = bool.Parse(sr.ReadLine());
+        m_stochF = bool.Parse(sr.ReadLine());
+        m_ruleX = sr.ReadLine();
+        m_ruleF = sr.ReadLine();
+        m_ruleY = sr.ReadLine();
+        m_ruleBO = sr.ReadLine();
+        m_ruleBC = sr.ReadLine();
+        m_ruleN = sr.ReadLine();
+        m_ruleP = sr.ReadLine();
         t_angle = float.Parse(sr.ReadLine());
         sr.Close();
 
         forceSetAngle(t_angle);
-        UiC.setText("Axiom", Axiom);
-        UiC.setText("Rule X", ruleX);
-        UiC.setText("Rule F", ruleF);
-        UiC.setText("Rule Y", ruleY);
-        UiC.setText("Rule Open Bracket", ruleBO);
-        UiC.setText("Rule Closed Bracket", ruleBC);
-        UiC.setText("Rule Plus", ruleP);
-        UiC.setText("Rule Minus", ruleN);
+        m_UiC.setText("Axiom", m_axiom);
+        m_UiC.setText("Rule X", m_ruleX);
+        m_UiC.setText("Rule F", m_ruleF);
+        m_UiC.setText("Rule Y", m_ruleY);
+        m_UiC.setText("Rule Open Bracket", m_ruleBO);
+        m_UiC.setText("Rule Closed Bracket", m_ruleBC);
+        m_UiC.setText("Rule Plus", m_ruleP);
+        m_UiC.setText("Rule Minus", m_ruleN);
 
-        UiC.setCheckbox("Y", stochY);
-        UiC.setCheckbox("F", stochF);
-        UiC.setCheckbox("X", stochX);
+        m_UiC.setCheckbox("Y", m_stochY);
+        m_UiC.setCheckbox("F", m_stochF);
+        m_UiC.setCheckbox("X", m_stochX);
 
-        UiC.setSliderInt("Iterations", iterations);
-        UiC.setSliderFloat("Angle", t_angle);
+        m_UiC.setSliderInt("Iterations", m_iterations);
+        m_UiC.setSliderFloat("Angle", t_angle);
 
 
     }
@@ -355,76 +342,76 @@ public class ReWriter : MonoBehaviour
         inter.setAngle(m_angle);
     }
 
-    public bool getGen()//returns if generate is true
-    { return generate; }
-    public void setGen(bool setter)//sets generate
-    { generate = setter; }
+    //public bool getGen()//returns if generate is true
+    //{ return m_generate; }
+    //public void setGen(bool setter)//sets generate
+    //{ m_generate = setter; }
 
-    public void setFileName(string text)
+    public void setFileName(string _text)
     {
-        fileName = text;
-    }
-
-    public void setAxiom(string text)
-    {
-        Axiom = text;
+        m_fileName = _text;
     }
 
-    public void setRuleX(string text)
+    public void setAxiom(string _text)
     {
-        ruleX = text;
+        m_axiom = _text;
     }
 
-    public void setRuleY(string text)
+    public void setRuleX(string _text)
     {
-        ruleY = text;
-    }
-    public void setRuleF(string text)
-    {
-        ruleF= text;
+        m_ruleX = _text;
     }
 
-    public void setRuleBO(string text)
+    public void setRuleY(string _text)
     {
-        ruleBO = text;
+        m_ruleY = _text;
     }
-    public void setRuleBC(string text)
+    public void setRuleF(string _text)
     {
-       ruleBC = text;
-    }
-
-    public void setRuleN(string text)
-    {
-        ruleN= text;
-    }
-    public void setRuleP(string text)
-    {
-        ruleP= text;
-    }
-    public void setStochY(bool temp)
-    {
-
-        stochY = temp;
-    }
-    public void setStochX(bool temp)
-    {
-
-        stochX = temp;
-    }
-    public void setStochF(bool temp)
-    {
-
-        stochF = temp;
+        m_ruleF = _text;
     }
 
-    public void setIterations(float temp)
+    public void setRuleBO(string _text)
     {
-        iterations = (int)temp;
+        m_ruleBO = _text;
+    }
+    public void setRuleBC(string _text)
+    {
+        m_ruleBC = _text;
+    }
+
+    public void setRuleN(string _text)
+    {
+        m_ruleN = _text;
+    }
+    public void setRuleP(string _text)
+    {
+        m_ruleP = _text;
+    }
+    public void setStochY(bool _temp)
+    {
+
+        m_stochY = _temp;
+    }
+    public void setStochX(bool _temp)
+    {
+
+        m_stochX = _temp;
+    }
+    public void setStochF(bool _temp)
+    {
+
+        m_stochF = _temp;
+    }
+
+    public void setIterations(float _temp)
+    {
+        m_iterations = (int)_temp;
     }
 
     public void setStochChance(float temp)
     {
-        stochChance = (int)temp;
+        m_stochChance = (int)temp;
     }
 }
 

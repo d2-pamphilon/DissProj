@@ -4,8 +4,7 @@ using UnityEngine;
 
 public class CamMovment : MonoBehaviour
 {
-
-
+    
     public float speed;
     public float turnSpeed;
     public float zoomSpeed;
@@ -26,32 +25,40 @@ public class CamMovment : MonoBehaviour
         if (Input.GetKey("s"))
         { transform.Translate(Vector3.down * speed); }
 
-        if (Input.GetMouseButtonDown(1))//right mouse
+
+        if (Input.GetMouseButtonDown(1))//right mouse sets rotation to true
         {
             mouseOrigin = Input.mousePosition;
             isRotating = true;
         }
-        if (!Input.GetMouseButton(1)) isRotating = false;
+        if (!Input.GetMouseButton(1))
+        { isRotating = false; }
 
-        if (Input.GetMouseButtonDown(0))//left mouse
-        { isZooming = true; }
-        if (!Input.GetMouseButton(0))
-        { isZooming = false; }
 
-        //rotate the screen with mouse when holding right mouse
-        if (isRotating)
+        float scroll = Input.GetAxis("Mouse ScrollWheel");//gets delta of scroll wheel
+
+        if (scroll > 0f)//scroll up
+        {
+            Vector3 pos = Camera.main.ScreenToViewportPoint(Input.mousePosition);
+            Vector3 move = pos.y * zoomSpeed * transform.forward;
+            transform.Translate(move, Space.World);
+
+        }
+        else if (scroll < 0f)//scroll down
+        {
+            Vector3 pos = Camera.main.ScreenToViewportPoint(Input.mousePosition);
+            Vector3 move = pos.y * zoomSpeed * transform.forward*-1;
+            transform.Translate(move, Space.World);
+        }
+       
+
+        if (isRotating)//rotate towards mouse when right mouse down
         {
             Vector3 pos = Camera.main.ScreenToViewportPoint(Input.mousePosition - mouseOrigin);
             transform.RotateAround(transform.position, transform.right, -pos.y * turnSpeed);
             transform.RotateAround(transform.position, Vector3.up, pos.x * turnSpeed);
         }
 
-        //zoom when left mouse clicked, zooms out with mouse at top of screen, down at bottom
-        if (isZooming)
-        {
-            Vector3 pos = Camera.main.ScreenToViewportPoint(Input.mousePosition - mouseOrigin);
-            Vector3 move = pos.y * zoomSpeed * transform.forward;
-            transform.Translate(move, Space.World);
-        }
+       
     }
 }

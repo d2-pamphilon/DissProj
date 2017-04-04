@@ -1,0 +1,13 @@
+fx
+10
+False
+False
+False
+x+yf+
+f
+-fx-y
+[
+]
+-
++
+90

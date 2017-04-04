@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using UnityEditor;
 
 public class Interpreter : MonoBehaviour
 {
@@ -19,12 +20,14 @@ public class Interpreter : MonoBehaviour
     public Material red;
     public float angle;
     public float rotationOfTrunk;
-    public int mode; //cant pass enum into switch witout converting to int, so just have int instead
+    public int mode = 0; //cant pass enum into switch witout converting to int, so just have int instead
     public GameObject cutOff;
     [SerializeField]
     pass state;
-    public bool Prune;
+    public bool Prune = false;
+   // private float sphereSize;
 
+    private string fileName;
     private static Stack<Vector3> thePosStack = new Stack<Vector3>();
     private static Stack<Quaternion> theRotStack = new Stack<Quaternion>();
     private ReWriter reWrite;
@@ -34,17 +37,14 @@ public class Interpreter : MonoBehaviour
     void Start()
     {
         //get ReWriting script
-        reWrite = GetComponent<ReWriter>();
+        reWrite = GetComponent<ReWriter>();  
         state = pass.none;
     }
 
     void Update()
     {
         if (state == pass.none)
-        {
-
-
-        }
+        {       }
         if (state == pass.first || state == pass.main)
         {
             interSting = reWrite.getFinalString();
@@ -54,38 +54,17 @@ public class Interpreter : MonoBehaviour
         }
         if (state == pass.save)
         {
-            //create prefab
-            //child all objects 
-            //save to
-        }
 
-        //if generate bool is true
-        //if (reWrite.getGen())
-        //{
-        //    //get the final string for interptiation
+            PrefabUtility.CreatePrefab("Assets/" + fileName +".prefab", parentObject, ReplacePrefabOptions.ReplaceNameBased);
+            state = pass.none;
 
-        //    //turn gen back off
-        //    reWrite.setGen(false);
-        //}
-
-        //if reset key pressed 
-        if (Input.GetKeyDown("r"))
-        {
-            //delet all trunks 
-            foreach (GameObject T in GameObject.FindGameObjectsWithTag("Player"))
-            { Destroy(T); }
-
-        }
+        }  
     }
     bool insideCheck(Vector3 curPos)
     {
-        //if (cutOff.GetComponent<Collider>().bounds.Contains(curPos))
-        //{ return true; }
-        //else
-        //{ return false; }
         if (Prune)
         {
-            if (Vector3.Distance(cutOff.transform.position, curPos) < cutOff.GetComponent<SphereCollider>().radius)
+            if (Vector3.Distance(cutOff.transform.position, curPos) <= cutOff.GetComponent<SphereCollider>().radius)//y u no work anym??
             {
                 return true;
             }
@@ -106,7 +85,7 @@ public class Interpreter : MonoBehaviour
     {
         //places turtle in the middle of the screen, 20X closer than the far plain
         turtle.transform.position = Camera.main.ScreenToWorldPoint(new Vector3(Screen.width / 2, Screen.height / 2, Camera.main.farClipPlane / 20));
-        cutOff.transform.position = Camera.main.ScreenToWorldPoint(new Vector3(Screen.width / 2, Screen.height / 2, Camera.main.farClipPlane / 20));
+        cutOff.transform.position = turtle.transform.position;// Camera.main.ScreenToWorldPoint(new Vector3(Screen.width / 2, Screen.height / 2, Camera.main.farClipPlane / 20));
         turtle.transform.rotation = Quaternion.LookRotation(Vector3.forward);
     }
 
@@ -238,7 +217,7 @@ public class Interpreter : MonoBehaviour
 
                 state = pass.main;
             }
-            if (state == pass.main)
+            else if (state == pass.main)
             {
                 Instantiate(trunk, turtle.transform.position, turtle.transform.rotation, parentObject.transform);
 
@@ -274,10 +253,17 @@ public class Interpreter : MonoBehaviour
 
         if (insideCheck(turtle.transform.position))
         {
-            //create trunk at turtles location and rotation
-            Instantiate(trunk, turtle.transform.position, turtle.transform.rotation);
-            //move turtle forward
+            if (state == pass.first)
+            {
+                parentObject = Instantiate(trunk, turtle.transform.position, turtle.transform.rotation);
 
+                state = pass.main;
+            }
+            else if (state == pass.main)
+            {
+                Instantiate(trunk, turtle.transform.position, turtle.transform.rotation, parentObject.transform);
+
+            }
         }
 
 
@@ -363,6 +349,18 @@ public class Interpreter : MonoBehaviour
     {
         mode = temp;
     }
+    public void setFileName(string text)
+    {
+        fileName = text;
+    }
+    public void save()
+    {
+        state = pass.save;
+    }
+    //public void setSphere(float temp)
+    //{
+    //    sphereSize = temp;
+    //}
 
 }
 
