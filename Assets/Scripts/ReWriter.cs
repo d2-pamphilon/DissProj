@@ -333,7 +333,7 @@ public class ReWriter : MonoBehaviour
     private float getAngle()//gets angle from interpriter
     {
         Interpreter inter = GetComponent<Interpreter>();
-        return inter.angle;
+        return inter.m_angle;
     }
 
     private void forceSetAngle(float m_angle)//sets interpriter angle

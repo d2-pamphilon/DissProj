@@ -1,8 +1,12 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+
 using UnityEditor;
 
+// X and Y are used for shaping the sting and have no functionality
+// in this system, commented functions have been put in place for 
+// future use  
 public class Interpreter : MonoBehaviour
 {
     private enum pass
@@ -13,58 +17,64 @@ public class Interpreter : MonoBehaviour
         save
     }
 
-    public string interSting;//move to private
-    public GameObject turtle;
-    public GameObject trunk;
-    public Material green;
-    public Material red;
-    public float angle;
-    public float rotationOfTrunk;
-    public int mode = 0; //cant pass enum into switch witout converting to int, so just have int instead
-    public GameObject cutOff;
+
+    public GameObject m_turtle;
+    public GameObject m_trunk;
+    public Material m_green;
+    public Material m_brown;
+    public float m_angle;
+
+    private string m_interSting;
+    private float m_rotationOfTrunk;
+    private int m_mode = 0; 
+    public GameObject m_cutOff;
     [SerializeField]
     pass state;
-    public bool Prune = false;
-   // private float sphereSize;
+    private bool m_prune = false;
 
-    private string fileName;
+    private string m_fileName;
     private static Stack<Vector3> thePosStack = new Stack<Vector3>();
     private static Stack<Quaternion> theRotStack = new Stack<Quaternion>();
     private ReWriter reWrite;
-    private GameObject parentObject;
+    private GameObject m_parentObject;
 
 
     void Start()
     {
         //get ReWriting script
-        reWrite = GetComponent<ReWriter>();  
+        reWrite = GetComponent<ReWriter>();
         state = pass.none;
     }
 
     void Update()
     {
-        if (state == pass.none)
-        {       }
+        
+        //if (state == pass.none)
+        //{/*Do Nothing*/ }
         if (state == pass.first || state == pass.main)
         {
-            interSting = reWrite.getFinalString();
+            m_interSting = reWrite.getFinalString();
             centerTurtle();
             mainLoop();
             state = pass.none;
         }
         if (state == pass.save)
         {
-
-            PrefabUtility.CreatePrefab("Assets/" + fileName +".prefab", parentObject, ReplacePrefabOptions.ReplaceNameBased);
+#if UNITY_EDITOR
+            //creates prefab and puts the base trunk the rest are parented to in it
+            PrefabUtility.CreatePrefab("Assets/" + m_fileName + ".prefab", m_parentObject, ReplacePrefabOptions.ReplaceNameBased);
             state = pass.none;
-
-        }  
+#endif
+        }
     }
-    bool insideCheck(Vector3 curPos)
+
+    bool insideCheck(Vector3 _curPos)
     {
-        if (Prune)
+        if (m_prune)//if prune ticked 
         {
-            if (Vector3.Distance(cutOff.transform.position, curPos) <= cutOff.GetComponent<SphereCollider>().radius)//y u no work anym??
+            //if distance between center of sphere and where trunk will spawn
+            //is less that the size of the sphere collider then spawn the trunk
+            if (Vector3.Distance(m_cutOff.transform.position, _curPos) <= m_cutOff.GetComponent<SphereCollider>().radius)//y u no work anymore??
             {
                 return true;
             }
@@ -84,74 +94,71 @@ public class Interpreter : MonoBehaviour
     private void centerTurtle()
     {
         //places turtle in the middle of the screen, 20X closer than the far plain
-        turtle.transform.position = Camera.main.ScreenToWorldPoint(new Vector3(Screen.width / 2, Screen.height / 2, Camera.main.farClipPlane / 20));
-        cutOff.transform.position = turtle.transform.position;// Camera.main.ScreenToWorldPoint(new Vector3(Screen.width / 2, Screen.height / 2, Camera.main.farClipPlane / 20));
-        turtle.transform.rotation = Quaternion.LookRotation(Vector3.forward);
+        m_turtle.transform.position = Camera.main.ScreenToWorldPoint(new Vector3(Screen.width / 2, Screen.height / 2, Camera.main.farClipPlane / 20));
+        //makes prune sphere center the start point 
+        m_cutOff.transform.position = m_turtle.transform.position;
+        //turtle looks up so trees should depending on string go up
+        m_turtle.transform.rotation = Quaternion.LookRotation(Vector3.forward);
     }
 
     private void mainLoop()
     {
         //look at each character in the final string
-        foreach (char c in interSting)
+        foreach (char c in m_interSting)
         {
             switch (c)
             {
                 //1 and 2 used for colour changing 
                 //switches out materials 
                 case '1':
-                    trunk.GetComponentInChildren<Renderer>().material = green;
+                    m_trunk.GetComponentInChildren<Renderer>().material = m_green;
                     break;
 
                 case '2':
-                    trunk.GetComponentInChildren<Renderer>().material = red;
+                    m_trunk.GetComponentInChildren<Renderer>().material = m_brown;
                     break;
                 //both caps and lowercase will work
                 case 'x':
                 case 'X':
-                    //included for future
-                    //can have multiple "modes" form same code
-                    switch (mode)
+                    //included for future                 
+                    switch (m_mode)
                     {
                         case 0:
-                            X2D();
+                            //X2D();
                             break;
                         case 1:
-                            XTree();
-                            //extra mode
+                           // XTree();                      
                             break;
                         default:
                             break;
                     }
-
                     break;
 
                 case 'f':
                 case 'F':
-                    switch (mode)
+                    switch (m_mode)
                     {
                         case 0:
                             F2D();
                             break;
                         case 1:
                             FTree();
-                            //extra mode
+                           
                             break;
                         default:
                             break;
                     }
-
                     break;
 
                 case 'y':
                 case 'Y':
-                    switch (mode)
+                    switch (m_mode)
                     {
                         case 0:
-                            Y2D();
+                            //Y2D();
                             break;
                         case 1:
-                            YTree();
-                            //extra mode
+                            //YTree();                         
                             break;
                         default:
                             break;
@@ -161,19 +168,19 @@ public class Interpreter : MonoBehaviour
                 case '[':
                     OnStack();
                     break;
-
                 case ']':
                     OffStack();
                     break;
+
                 case '+':
-                    switch (mode)
+                    switch (m_mode)
                     {
                         case 0:
                             P2D();
                             break;
                         case 1:
                             PTree();
-                            //extra mode
+                          
                             break;
                         default:
                             break;
@@ -182,132 +189,132 @@ public class Interpreter : MonoBehaviour
 
                 case '-':
                 case '−':
-                    switch (mode)
+                    switch (m_mode)
                     {
                         case 0:
                             N2D();
                             break;
                         case 1:
                             NTree();
-                            //extra mode
+                           
                             break;
                         default:
                             break;
                     }
                     break;
+
                 default:
                     print("default");
                     break;
             }
         }
     }
-
-    //2d functions
-    private void X2D()
-    {/*do nothing*/}
-
+  
     private void F2D()
     {
-
-        if (insideCheck(turtle.transform.position))
+        //check if trunks allowed to spawn 
+        if (insideCheck(m_turtle.transform.position))
         {
+            //if its the first pass make the trunk the parrent object for the rest
             if (state == pass.first)
             {
-                parentObject = Instantiate(trunk, turtle.transform.position, turtle.transform.rotation);
-
+                m_parentObject = Instantiate(m_trunk, m_turtle.transform.position, m_turtle.transform.rotation);
                 state = pass.main;
             }
             else if (state == pass.main)
             {
-                Instantiate(trunk, turtle.transform.position, turtle.transform.rotation, parentObject.transform);
+                //created childed to parent
+                Instantiate(m_trunk, m_turtle.transform.position, m_turtle.transform.rotation, m_parentObject.transform);
 
             }
         }
-        turtle.transform.Translate(Vector3.up * 2);
-
-
-
+        //moves forward even if trunk dosnt spawn
+        m_turtle.transform.Translate(Vector3.up * 2);
     }
-
-    private void Y2D()
-    { /*nothing*/    }
-
-
+  
     private void P2D()
     {
         //angle right
-        turtle.transform.Rotate(new Vector3(0.0f, 0.0f, -angle));
+        m_turtle.transform.Rotate(new Vector3(0.0f, 0.0f, -m_angle));
     }
 
     private void N2D()
     {
         //angle left
-        turtle.transform.Rotate(new Vector3(0.0f, 0.0f, angle));
+        m_turtle.transform.Rotate(new Vector3(0.0f, 0.0f, m_angle));
     }
 
-    //3d tree specific functions
 
-    //comon functions
     private void FTree()
     {
 
-        if (insideCheck(turtle.transform.position))
+        if (insideCheck(m_turtle.transform.position))
         {
             if (state == pass.first)
             {
-                parentObject = Instantiate(trunk, turtle.transform.position, turtle.transform.rotation);
+                m_parentObject = Instantiate(m_trunk, m_turtle.transform.position, m_turtle.transform.rotation);
 
                 state = pass.main;
             }
             else if (state == pass.main)
             {
-                Instantiate(trunk, turtle.transform.position, turtle.transform.rotation, parentObject.transform);
+                Instantiate(m_trunk, m_turtle.transform.position, m_turtle.transform.rotation, m_parentObject.transform);
 
             }
         }
 
 
-        turtle.transform.Translate(Vector3.up * 2);
+        m_turtle.transform.Translate(Vector3.up * 2);
         //add rotation for simple 3d 
-        turtle.transform.Rotate(new Vector3(0f, rotationOfTrunk, 0f));
+        m_turtle.transform.Rotate(new Vector3(0f, m_rotationOfTrunk, 0f));
 
     }
-    private void XTree()
-    {/*nothing atm*/ }
 
-    private void YTree()
-    { /*nothing atm*/}
+    //For exta functionality if wanted
 
-    //varience in angle
+    //private void XTree()
+    //{/*nothing atm*/ }
+
+    //private void YTree()
+    //{ /*nothing atm*/}
+
+    //private void Y2D()
+    //{ /*nothing*/  }
+
+    //private void X2D()
+    //{/*do nothing*/}
+
+
     private void PTree()
     {
         //angle right with slight varience 
-        float tempAngle = Random.Range(angle - 5, angle + 5);
-        turtle.transform.Rotate(new Vector3(0.0f, 0.0f, -tempAngle));
+        float tempAngle = Random.Range(m_angle - 5, m_angle + 5);
+        m_turtle.transform.Rotate(new Vector3(0.0f, 0.0f, -tempAngle));
     }
 
     private void NTree()
     {
         //angle left with slight varience
-        float tempAngle = Random.Range(angle - 5, angle + 5);
-        turtle.transform.Rotate(new Vector3(0.0f, 0.0f, tempAngle));
+        float tempAngle = Random.Range(m_angle - 5, m_angle + 5);
+        m_turtle.transform.Rotate(new Vector3(0.0f, 0.0f, tempAngle));
     }
 
     private void OnStack()
-    { //place turtles position into the position stack
-        Vector3 tempPos = turtle.transform.position;
+    {
+        //place turtles position into the position stack
+        Vector3 tempPos = m_turtle.transform.position;
         thePosStack.Push(tempPos);
         //place turtles rotation into the rotation stack
-        Quaternion tempRot = turtle.transform.rotation;
+        Quaternion tempRot = m_turtle.transform.rotation;
         theRotStack.Push(tempRot);
     }
 
     private void OffStack()
     {
         // move turtle to position on top of stack
-        turtle.transform.position = thePosStack.Pop();
+        m_turtle.transform.position = thePosStack.Pop();
         //rotate turtle to rotation on stack
-        turtle.transform.rotation = theRotStack.Pop();
+        m_turtle.transform.rotation = theRotStack.Pop();
     }
 
     //setters
@@ -334,34 +341,30 @@ public class Interpreter : MonoBehaviour
 
     public void setPrune(bool temp)
     {
-        Prune = temp;
+        m_prune = temp;
 
     }
     public void setAngle(float temp)
     {
-        angle = temp;
+        m_angle = temp;
     }
     public void setTrunkRot(float temp)
     {
-        rotationOfTrunk = (int)temp;
+        m_rotationOfTrunk = (int)temp;
     }
     public void setMode(int temp)
     {
-        mode = temp;
+        m_mode = temp;
     }
     public void setFileName(string text)
     {
-        fileName = text;
+        m_fileName = text;
     }
     public void save()
     {
         state = pass.save;
     }
-    //public void setSphere(float temp)
-    //{
-    //    sphereSize = temp;
-    //}
-
+ 
 }
 
 
